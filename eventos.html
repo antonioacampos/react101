@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Eventos no React</title>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="posicao1"></div>
+    <script type="text/babel">
+
+        function Botao(props) {
+            return (
+                <button onClick={props.trataClique}>{props.rotulo}</button>
+            )
+        }
+
+        function Card(props) {
+
+            function vota(evento) {
+                props.setEstado(votos => {
+            const incrementVotos = [...votos]//copia os votos separadamente no novo array
+            incrementVotos[props.ordem] = incrementVotos[props.ordem]+ 1
+
+            return incrementVotos
+        })}
+            
+
+            return (
+                <React.Fragment>
+                    <h3>{props.nome} tem {props.estado} até agora</h3>
+                    <Botao rotulo="Votar" trataClique={vota} />
+                </React.Fragment>
+            )
+        }
+
+        function ListaProfessores() {
+            function getProfessores() {
+                //busca no servidor os docentes e montar um objeto JS com eles
+
+                return JSON.parse(
+                    JSON.stringify(
+                        [
+                            {
+                                id: 1,
+                                nome: "Danilo",
+                                area: "redes / mobile / web"
+                            },
+                            {
+                                id: 2,
+                                nome: "Carlão",
+                                area: "mobile / geoprocessamento"
+                            },
+                            {
+                                id: 3,
+                                nome: "Bianchi",
+                                area: "IA / automação"
+                            },
+                            {
+                                id: 4,
+                                nome: "Salina",
+                                area: "redes / mobile"
+                            },
+                        ]
+                    )
+                )
+            }
+
+            const [votacao, setVotacao] = React.useState([0, 0, 0, 0]);
+            //let lista = [<Card nome="Danilo"/>,<br/>,<Botao rotulo="Sera?"/>,<Card nome="Salina"/> ]
+
+            let lista = getProfessores().map(
+                (pessoa, posicao) => <Card 
+                 nome={pessoa.nome}
+                 key={pessoa.id}
+                 ordem={posicao}
+                 estado={votacao[posicao]}
+                 setEstado={setVotacao}
+                 />
+            )
+            return (
+                <React.Fragment>
+                    <h3>Lista de professores</h3>
+                    <ul>
+                        {lista}
+                    </ul>
+                </React.Fragment>
+            )
+        }
+
+        ReactDOM.render(<ListaProfessores />, document.getElementById("posicao1"));
+
+    </script>
+</body>
+
+</html>
